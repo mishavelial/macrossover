@@ -1,18 +1,10 @@
-# This is a sample Python script.
+import yfinance as yf
+import pandas as pd
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+#df = yf.download('SPY', start='2018-01-01', end='2025-12-23')
+#df.to_csv('SPY.csv')
 
-print('Hello')
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+df = pd.read_csv('SPY.csv')
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+print(df.head())
