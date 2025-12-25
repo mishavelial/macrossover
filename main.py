@@ -44,3 +44,17 @@ df.loc[df['MA_short'] > df['MA_long'], 'Signal'] = 1
 #avoiding look-ahead by shifting the signal by 1 day
 df['Position'] = df['Signal'].shift(1)
 df.to_csv('SPY.csv', index=False)
+
+#creating daily returns and pnl
+df['Daily Returns'] = df['Close'].pct_change()
+df['Strategy Returns'] = df['Daily Returns'] * df['Position']
+df['Buy-and-Hold Benchmark'] = df['Daily Returns']
+
+
+df['Cumulative Strategy Returns'] = (1 + df['Strategy Returns'].cumprod())
+df['Buy-and-Hold Benchmark Returns'] = (1 + df['Daily Returns'].cumprod())
+
+strategy_returns = df['Cumulative Strategy Returns'].sum()
+bh_total_return = (1 + df['Buy-and-Hold Benchmark Returns']).cumprod().iloc[-1] - 1
+print(strategy_returns - 1)
+print(bh_total_return - 1)
