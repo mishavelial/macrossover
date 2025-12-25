@@ -50,11 +50,34 @@ df['Daily Returns'] = df['Close'].pct_change()
 df['Strategy Returns'] = df['Daily Returns'] * df['Position']
 df['Buy-and-Hold Benchmark'] = df['Daily Returns']
 
+strategy_curve = (1 + df['Strategy Returns']).cumprod()
+bh_curve = (1 + df['Daily Returns']).cumprod()
 
-df['Cumulative Strategy Returns'] = (1 + df['Strategy Returns'].cumprod())
-df['Buy-and-Hold Benchmark Returns'] = (1 + df['Daily Returns'].cumprod())
+strategy_total = strategy_curve.iloc[-1] - 1
+bh_total= bh_curve.iloc[-1] - 1
 
-strategy_returns = df['Cumulative Strategy Returns'].sum()
-bh_total_return = (1 + df['Buy-and-Hold Benchmark Returns']).cumprod().iloc[-1] - 1
-print(strategy_returns - 1)
-print(bh_total_return - 1)
+print("Strategy: " + str(round(strategy_total, 2)))
+print("Buy and Hold: " + str(round(bh_total, 2)))
+
+df.set_index('Date', inplace=True)
+plt.plot(df.index, strategy_curve)
+plt.title('Strategy')
+plt.xlabel('Date')
+plt.ylabel('Cumulative Returns')
+plt.show()
+
+plt.plot(df.index, bh_curve)
+plt.title('Benchmark')
+plt.xlabel('Date')
+plt.ylabel('Cumulative Returns')
+plt.show()
+
+daily = df['Strategy Returns'].dropna()
+
+mean_daily = daily.mean()
+std_daily  = daily.std(ddof=1)
+
+sharpe = (mean_daily / std_daily) * np.sqrt(252)
+print("Sharpe:", round(sharpe, 2))
+
+#conclusion: a simple buy and hold outperforms this simple strategy, as expected. a sharpe ratio of 0.68 is quite below the taget of at least 1.5 to be even remotely considered for implementation.
